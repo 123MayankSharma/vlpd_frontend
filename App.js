@@ -11,7 +11,7 @@ function App() {
 
     <Stack.Navigator>
       <Stack.Screen name="Home" component={Home} options={{ title: "VLPD" }} />
-      {/* <Stack.Screen name="Info" component={Info} options={{ title: "Owner Info" }} /> */}
+      <Stack.Screen name="Info" component={Info} options={{ title: "Owner Info" }} />
     </Stack.Navigator>
   )
 }
@@ -36,14 +36,14 @@ export default () => {
 };
 
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#121212',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: Constants.statusBarHeight,
-  },
-});
-
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#121212',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     marginTop: Constants.statusBarHeight,
+//   },
+// });
+//
 
