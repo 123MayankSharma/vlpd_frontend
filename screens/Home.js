@@ -21,7 +21,7 @@ const Home = ({ navigation }) => {
               icon="arrow-right-drop-circle"
               theme={{ colors: { primary: "teal" } }}
               mode="contained"
-              onPress={() => navigation.navigate("Info")}
+              onPress={() => navigation.navigate("Upload")}
             // style={styles.buttonStyle}
             >
               Start Scanning

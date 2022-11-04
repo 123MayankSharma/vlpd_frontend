@@ -1,207 +1,109 @@
-import { Text, View, StyleSheet, Image } from 'react-native'
-import * as ImagePicker from "expo-image-picker";
-import { Modal, Portal, Button, Provider } from "react-native-paper"
-import { useState } from 'react'
-const Info = ({ navigation }) => {
-  const [modal, setModal] = useState(false);
-  const [photo, setPhoto] = useState(false);
-  const [imageInfo, setImageInfo] = useState({})
-
-  const selectImageFromGallery = async () => {
-    //ask for permission to access library
-
-    if (photo == true) {
-      uploadImage()
-    }
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (permission.granted == true) {
-      let res = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.6,
-      });
-
-      if (!res.cancelled) {
-        let imageInfo = {
-          uri: res.uri,
-          type: `test/${res.uri.split(".")[1]}`,
-          name: `test.${res.uri.split(".")[1]}`,
-        };
-        setImageInfo(imageInfo);
-        setModal(false);
-        setPhoto(true)
-      }
+import React from "react";
+import { Image, StyleSheet, Text, View, Linking, Platform, Alert } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Title, Card, Button } from "react-native-paper";
+import { MaterialIcons } from "@expo/vector-icons";
+const Info = ({ route, navigation }) => {
+  //we have received these params from the Home component as of now
+  const { _id, name, photo, phone, salary, email, position } =
+    route.params.item;
+  const openDial = () => {
+    if (Platform.OS === "android") {
+      Linking.openURL(`tel:${phone}`);
     } else {
-      Alert.alert("Gallery Permission Required!");
+      Linking.openURL(`telprompt:${phone}`);
     }
-  };
-
-  //function for using camera
-  const selectImageFromCamera = async () => {
-    //ask for permission to access library
-    if (photo == true) {
-      uploadImage()
-    }
-
-    const permission = await ImagePicker.requestCameraPermissionsAsync();
-
-    if (permission.granted == true) {
-      let res = await ImagePicker.launchCameraAsync();
-      if (!res.cancelled) {
-        let imageInfo = {
-          uri: res.uri,
-          type: `test/${res.uri.split(".")[1]}`,
-          name: `test.${res.uri.split(".")[1]}`,
-        };
-        setImageInfo(imageInfo);
-        setModal(false);
-        setPhoto(true)
-      }
-    } else {
-      Alert.alert("Camera Permission Required!");
-    }
-  };
-
-  //function for handling image uploads to cloudinary
-  const uploadImage = () => {
-    // const data = new FormData();
-    // data.append("file", image);
-    // fetch("model_api_link", {
-    //   method: "post",
-    //   body: data,
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     setPhoto(data.url);
-    //   })
-    //   .catch((err) => {
-    //     Alert.alert("Error While Uploading Image!");
-    //   });
-    //
-
-    console.log(imageInfo)
-    navigation.navigate("Home")
   };
   return (
-    <View style={styles.root} >
-      <Image uri={imageInfo.uri} />
-      <Button
-        icon={photo == false ? "upload" : "check"}
-        mode="contained"
-        theme={{ colors: { primary: "teal" } }}
+    <View style={styles.root}>
+      {/* <Text style={{color:"white"}}>profil</Text> */}
+      <LinearGradient colors={["gray", "teal"]} style={{ height: "20%" }} />
+      <View style={{ alignItems: "center", marginTop: -40 }}>
+        <Image
+          style={{ width: 120, height: 120, borderRadius: 60 }}
+          source={{
+            uri: `${photo}`,
+          }}
+        />
+        <Title style={{ color: "white", fontSize: 20 }}>{name}</Title>
+        <Text style={{ color: "white", fontSize: 18 }}>{position}</Text>
+      </View>
+      <Card
+        style={styles.profileCard}
         onPress={() => {
-          photo == false ? setModal(true) : uploadImage();
-        }}
-        style={{
-          marginTop: "70%",
-          marginLeft: "20%",
-          width: '60%',
-          height: "10%",
-          justifyContent: "center",
-          alignItems: "center"
-
+          Linking.openURL(`mailto:${email}`);
         }}
       >
-        {photo == false ? "Click/Select Image" : "Upload Image"}
-      </Button>
-      <Button
-        mode="contained"
-        theme={{ colors: { primary: "teal" } }}
-        onPress={() => {
-          if (photo == true) {
-            setPhoto(false)
-            setModal(true)
-          } else {
-            navigation.navigate("Home")
-          }
-        }}
+        <View style={styles.cardContent}>
+          <MaterialIcons name="email" size={28} color="white" />
+          <Text style={styles.profileInfo}>{email}</Text>
+        </View>
+      </Card>
+      <Card style={styles.profileCard} onPress={openDial}>
+        <View style={styles.cardContent}>
+          <MaterialIcons name="phone-android" size={28} color="white" />
+          <Text style={styles.profileInfo}>{phone}</Text>
+        </View>
+      </Card>
+      <Card style={styles.profileCard}>
+        <View style={styles.cardContent}>
+          <MaterialIcons name="money" size={28} color="white" />
+          <Text style={styles.profileInfo}>{salary}</Text>
+        </View>
+      </Card>
+      <View
         style={{
-          marginTop: "5%",
-          marginLeft: "20%",
-          width: '60%',
-          height: "10%",
-          justifyContent: "center",
-          alignItems: "center"
-
+          flexDirection: "row",
+          justifyContent: "space-around",
+          marginTop: 30,
         }}
-
       >
-        {photo == false ? "Go Back" : "Re-Select Image"}
-      </Button>
-      <Provider>
-        <Portal>
-          <Modal
-            visible={modal}
-            onDismiss={() => {
-              setModal(false);
-            }}
-            contentContainerStyle={styles.ModalStyle}
-          >
-            <View>
-              <View style={styles.modalButton}>
-                <Button
-                  icon="camera"
-                  mode="contained"
-                  style={{ marginRight: 5 }}
-                  theme={{ colors: { primary: "teal" } }}
-                  onPress={selectImageFromCamera}
-                >
-                  camera
-                </Button>
-                <Button
-                  icon="image"
-                  mode="contained"
-                  style={{ marginRight: 3 }}
-                  theme={{ colors: { primary: "teal" } }}
-                  onPress={selectImageFromGallery}
-                >
-                  gallery
-                </Button>
-              </View>
-              <Button
-                icon="close"
-                mode="contained"
-                onPress={() => {
-                  setModal(false);
-                }}
-                style={{ marginHorizontal: 20, marginVertical: 20 }}
-              >
-                Cancel
-              </Button>
-            </View>
-          </Modal>
-        </Portal>
-      </Provider>
+        <Button
+          onPress={() => {
+            navigation.navigate("Create", { item: route.params.item })
+          }}
+          icon="account-edit"
+          mode="contained"
+          theme={{ colors: { primary: "teal" } }}
+        >
+          Edit info
+        </Button>
+        <Button
+          onPress={deleteEmployeeInfo}
+          icon="delete"
+          mode="contained"
+          theme={{ colors: { primary: "teal" } }}
+        >
+          Delete Info
+        </Button>
+      </View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "#000000",
-    color: "#fff",
-    margin: 8,
-    justifyContent: "center",
   },
-  modalButton: {
+  profileCard: {
+    color: "white",
+    marginTop: 30,
+    marginLeft: 0,
+    marginRight: 10,
+    marginBottom: -10,
+    width: "100%",
+    borderRadius: 10,
+  },
+  cardContent: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 10,
-    marginBottom: 100,
+    backgroundColor: "#2f333e",
+    padding: 8,
   },
-  ModalStyle: {
-    backgroundColor: "azure",
-    marginTop: 70,
-    marginBottom: 100,
-    marginLeft: 30,
-    marginRight: 30,
+  profileInfo: {
+    color: "white",
+    fontSize: 18,
+    marginLeft: 3,
   },
 });
 
-
-
-
-export default Info
+export default Info 

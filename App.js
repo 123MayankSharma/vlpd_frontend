@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './screens/Home'
+import Upload from './screens/Upload'
 import Info from './screens/Info'
 import Constants from "expo-constants";
 function App() {
@@ -11,6 +12,7 @@ function App() {
 
     <Stack.Navigator>
       <Stack.Screen name="Home" component={Home} options={{ title: "VLPD" }} />
+      <Stack.Screen name="Upload" component={Upload} options={{ title: "Upload Image" }} />
       <Stack.Screen name="Info" component={Info} options={{ title: "Owner Info" }} />
     </Stack.Navigator>
   )
