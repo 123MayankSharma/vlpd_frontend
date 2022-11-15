@@ -3,10 +3,11 @@ import { Image, StyleSheet, Text, View, Linking, Platform, Alert } from "react-n
 import { LinearGradient } from "expo-linear-gradient";
 import { Title, Card, Button } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
+
 const Info = ({ route, navigation }) => {
   //we have received these params from the Home component as of now
-  const { _id, name, photo, phone, salary, email, position } =
-    route.params.item;
+  const { _id, name,email,vehicle_number_plate,phone,address,Date } = route.params.info;
+  console.log(route.params.info) 
   const openDial = () => {
     if (Platform.OS === "android") {
       Linking.openURL(`tel:${phone}`);
@@ -15,18 +16,19 @@ const Info = ({ route, navigation }) => {
     }
   };
   return (
+    
     <View style={styles.root}>
       {/* <Text style={{color:"white"}}>profil</Text> */}
       <LinearGradient colors={["gray", "teal"]} style={{ height: "20%" }} />
       <View style={{ alignItems: "center", marginTop: -40 }}>
-        <Image
-          style={{ width: 120, height: 120, borderRadius: 60 }}
-          source={{
-            uri: `${photo}`,
-          }}
-        />
-        <Title style={{ color: "white", fontSize: 20 }}>{name}</Title>
-        <Text style={{ color: "white", fontSize: 18 }}>{position}</Text>
+        {/* <Image */}
+        {/*   style={{ width: 120, height: 120, borderRadius: 60 }} */}
+        {/*   source={{ */}
+        {/*     uri: `${photo}`, */}
+        {/*   }} */}
+        {/* /> */}
+        <Title style={{ color: "white", fontSize: 30 }}>{name}</Title>
+        <Text style={{ color: "white", fontSize: 18,marginTop:-10 }}>{}</Text>
       </View>
       <Card
         style={styles.profileCard}
@@ -39,6 +41,13 @@ const Info = ({ route, navigation }) => {
           <Text style={styles.profileInfo}>{email}</Text>
         </View>
       </Card>
+     <Card style={styles.profileCard}>
+        <View style={styles.cardContent}>
+          <MaterialIcons name="date-range" size={28} color="white" />
+          <Text style={styles.profileInfo}>{Date}</Text>
+        </View>
+      </Card>
+
       <Card style={styles.profileCard} onPress={openDial}>
         <View style={styles.cardContent}>
           <MaterialIcons name="phone-android" size={28} color="white" />
@@ -47,10 +56,17 @@ const Info = ({ route, navigation }) => {
       </Card>
       <Card style={styles.profileCard}>
         <View style={styles.cardContent}>
-          <MaterialIcons name="money" size={28} color="white" />
-          <Text style={styles.profileInfo}>{salary}</Text>
+          <MaterialIcons name="home" size={28} color="white" />
+          <Text style={styles.profileInfo}>{address}</Text>
         </View>
       </Card>
+    <Card style={styles.profileCard}>
+        <View style={styles.cardContent}>
+          <MaterialIcons name="format-list-numbered-rtl" size={28} color="white" />
+          <Text style={styles.profileInfo}>{vehicle_number_plate}</Text>
+        </View>
+      </Card>
+
       <View
         style={{
           flexDirection: "row",
@@ -60,21 +76,13 @@ const Info = ({ route, navigation }) => {
       >
         <Button
           onPress={() => {
-            navigation.navigate("Create", { item: route.params.item })
+            navigation.navigate("Home")
           }}
-          icon="account-edit"
+          icon="home"
           mode="contained"
           theme={{ colors: { primary: "teal" } }}
         >
-          Edit info
-        </Button>
-        <Button
-          onPress={deleteEmployeeInfo}
-          icon="delete"
-          mode="contained"
-          theme={{ colors: { primary: "teal" } }}
-        >
-          Delete Info
+          Home
         </Button>
       </View>
     </View>
@@ -106,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Info 
+export default Info

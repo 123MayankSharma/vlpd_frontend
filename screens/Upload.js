@@ -1,12 +1,12 @@
-import { Text, View, StyleSheet, Image } from 'react-native'
+import {View, StyleSheet, Image, Alert } from 'react-native'
 import * as ImagePicker from "expo-image-picker";
 import { Modal, Portal, Button, Provider } from "react-native-paper"
+import axios from 'axios'
 import { useState } from 'react'
 const Info = ({ navigation }) => {
   const [modal, setModal] = useState(false);
   const [photo, setPhoto] = useState(false);
   const [imageInfo, setImageInfo] = useState({})
-
   const selectImageFromGallery = async () => {
     //ask for permission to access library
 
@@ -19,17 +19,17 @@ const Info = ({ navigation }) => {
       let res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [1, 1],
         quality: 0.6,
       });
 
       if (!res.cancelled) {
-        let imageInfo = {
+        // console.log(res)
+        let image = {
           uri: res.uri,
-          type: `test/${res.uri.split(".")[1]}`,
+          type: "image/jpg",
           name: `test.${res.uri.split(".")[1]}`,
         };
-        setImageInfo(imageInfo);
+        setImageInfo(image);
         setModal(false);
         setPhoto(true)
       }
@@ -41,21 +41,19 @@ const Info = ({ navigation }) => {
   //function for using camera
   const selectImageFromCamera = async () => {
     //ask for permission to access library
-    if (photo == true) {
-      uploadImage()
-    }
 
     const permission = await ImagePicker.requestCameraPermissionsAsync();
 
     if (permission.granted == true) {
       let res = await ImagePicker.launchCameraAsync();
       if (!res.cancelled) {
-        let imageInfo = {
+        // console.log(res)
+        let image = {
           uri: res.uri,
-          type: `test/${res.uri.split(".")[1]}`,
+          type: "image/jpeg/jpg",
           name: `test.${res.uri.split(".")[1]}`,
         };
-        setImageInfo(imageInfo);
+        setImageInfo(image);
         setModal(false);
         setPhoto(true)
       }
@@ -64,25 +62,53 @@ const Info = ({ navigation }) => {
     }
   };
 
-  //function for handling image uploads to cloudinary
-  const uploadImage = () => {
-    // const data = new FormData();
-    // data.append("file", image);
-    // fetch("model_api_link", {
-    //   method: "post",
-    //   body: data,
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     setPhoto(data.url);
+  //function for handling image uploads to backend
+  const uploadImage = async () => {
+    const formData = new FormData();
+    const imgUri = imageInfo.uri;
+    let uriParts = imgUri.split('.');
+    let fileType = uriParts[uriParts.length - 1];
+    // console.log(fileType)
+    formData.append('image', {
+      uri: imgUri,
+      name: `${Date.now()}.${fileType}`,
+      type: `image/${fileType}`
+    })
+    // let options = {
+    //   method: 'POST',
+    //   body: formData,
+    //   headers: {
+    //     'Content-Type': 'multipart/form-data',
+    //   },
+    // };
+
+    // fetch("http://0f60-122-50-195-12.ngrok.io/owner_info", options)
+    //   .then((res) => {
+    //     console.log(JSON.stringify(res))
+    //   })
+    //   .then((res) => {
+    //     console.log(res)
     //   })
     //   .catch((err) => {
+    //     console.error(err)
     //     Alert.alert("Error While Uploading Image!");
     //   });
-    //
 
-    console.log(imageInfo)
-    navigation.navigate("Home")
+
+
+    axios.post("http://3fb9-110-235-239-90.ngrok.io/owner_info", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    })
+      .then(function(response) {
+        // console.log(response.data)
+        navigation.navigate("Info",{info:response.data});
+      })
+      .catch(function(error) {
+        console.error(error)
+      });
+    
   };
   return (
     <View style={styles.root} >

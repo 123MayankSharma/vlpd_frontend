@@ -5,6 +5,7 @@ import Home from './screens/Home'
 import Upload from './screens/Upload'
 import Info from './screens/Info'
 import Constants from "expo-constants";
+
 function App() {
 
   const Stack = createNativeStackNavigator();
